@@ -1,0 +1,25 @@
+# Taint the node :  kubectl taint nodes <node_name>  hardware=gpu:NoSchedule 
+# Toleration on pod, node affinity on pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    nodeAffinity:
+    # hardrule : place the pod on node if matches
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: hardware
+            operator: In
+            values:
+            - gpu   
+  containers:
+  - name: nginx
+    image: nginx:stable-perl
+  tolerations:
+  - key: "hardware"
+    operator: "Equal"
+    value: "gpu"
+    effect: "NoSchedule"
